@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BE Refresher Challenge</title>
+<style>
+:root{--bg:#101722;--panel:#182230;--panel2:#202d3d;--text:#edf3f8;--muted:#9eacbb;--a:#6fa8dc;--g:#70c49a;--r:#e07a7a;--gold:#e5c77a}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#0f1722,#172230);color:var(--text);font-family:Segoe UI,Arial,sans-serif;min-height:100vh}
+.app{max-width:1050px;margin:auto;padding:22px}.top{display:flex;justify-content:space-between;gap:15px;align-items:center}.eyebrow{font-size:12px;letter-spacing:1.4px;font-weight:700;color:#8ec5b5;text-transform:uppercase}.top h1{margin:6px 0;font-size:clamp(27px,4vw,38px)}.muted{color:var(--muted);line-height:1.55}
+.score{background:var(--panel);border:1px solid #2b3b4d;border-radius:15px;padding:10px 17px;text-align:center}.score b{display:block;font-size:25px;color:var(--gold)}
+.nav{display:flex;gap:7px;overflow:auto;margin:18px 0 10px}.nav button{background:var(--panel);color:var(--muted);border:1px solid #2b3b4d;padding:10px 13px;border-radius:11px;white-space:nowrap;cursor:pointer}.nav .active{color:white;background:#26384b}
+.progress{height:6px;background:#273342;border-radius:9px;overflow:hidden;margin-bottom:20px}.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--a),#8ec5b5);transition:.3s}
+.screen{display:none}.screen.active{display:block}.card{background:var(--panel);border:1px solid #2b3b4d;border-radius:19px;padding:25px;box-shadow:0 10px 30px #0002}
+h2{margin:6px 0;font-size:28px}.instruction{background:#111b27;border-left:4px solid var(--a);padding:13px 15px;border-radius:10px;margin:17px 0;line-height:1.55}
+.question{font-size:21px;font-weight:700;margin:25px 0 12px}.options{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.option{background:#263547;color:white;border:1px solid #3a4d61;border-radius:11px;padding:14px;cursor:pointer;font-size:16px}.option:hover{border-color:#79a3c8}.option:disabled{opacity:.9;cursor:default}
+.feedback{min-height:24px;margin-top:9px;font-weight:600}.good{color:var(--g)}.bad{color:var(--r)}
+.controls{display:flex;justify-content:space-between;gap:10px;margin-top:22px}button.primary,button.secondary{border:0;border-radius:11px;padding:12px 17px;font-weight:700;cursor:pointer}.primary{background:var(--a);color:#08111a}.secondary{background:#293746;color:white}
+.profile{display:grid;grid-template-columns:1fr 1fr;gap:11px}.profile>div{background:#111b27;padding:12px;border-radius:11px}.profile label{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;margin-bottom:7px}.field{width:100%;background:#172230;border:1px solid #35495d;border-radius:9px;padding:11px;color:white;font-size:16px}
+.center{text-align:center}.badge{font-size:52px}
+@media(max-width:700px){.options,.profile{grid-template-columns:1fr}.app{padding:14px}.card{padding:19px}.top{align-items:flex-start}}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="top"><div><div class="eyebrow">15–20 minute review</div><h1>BE Refresher Challenge</h1><div class="muted">Wake up what you already know. Choose, fix, ask, and speak.</div></div><div class="score">Score<b id="score">0</b><small id="status">Ready</small></div></div>
+<div class="nav" id="nav">
+<button class="active" onclick="go('start')">Start</button><button onclick="go('forms')">1 · Choose BE</button><button onclick="go('fix')">2 · Fix It</button><button onclick="go('questions')">3 · Ask & Answer</button><button onclick="go('profile')">4 · Quick Profile</button><button onclick="go('finish')">Finish</button>
+</div><div class="progress"><span id="bar"></span></div>
+
+<section class="screen active" id="start"><div class="card">
+<div class="eyebrow">Mission brief</div><h2>How much do you remember?</h2>
+<p class="muted">This is a quick refresher, not a grammar lecture. Use <b>am, is, are</b> to talk about people, places, jobs, preferences, and personal information.</p>
+<div class="instruction"><b>Challenge:</b> Don't just click. When you see a sentence, read it aloud. When you see a question, say the answer aloud too.</div>
+<div class="controls"><span></span><button class="primary" onclick="go('forms')">Start →</button></div>
+</div></section>
+
+<section class="screen" id="forms"><div class="card"><div class="eyebrow">Mission 1 · 5 rounds</div><h2>Choose the BE</h2><p class="muted">Choose <b>am, is,</b> or <b>are</b>. Think about the subject first.</p><div id="formsBox"></div></div></section>
+<section class="screen" id="fix"><div class="card"><div class="eyebrow">Mission 2 · 5 rounds</div><h2>Fix It</h2><p class="muted">One version is correct. Choose it, then read it aloud.</p><div id="fixBox"></div></div></section>
+<section class="screen" id="questions"><div class="card"><div class="eyebrow">Mission 3 · 5 rounds</div><h2>Ask & Answer</h2><p class="muted">Choose the correct question starter. Then say the complete question and short answer aloud.</p><div id="qBox"></div></div></section>
+
+<section class="screen" id="profile"><div class="card">
+<div class="eyebrow">Mission 4 · production</div><h2>Quick Profile</h2>
+<p class="muted">Write short answers. Then read your profile aloud and tell a partner three things without looking.</p>
+<div class="instruction"><b>Useful patterns:</b><br>My name is… · I am… · I'm from… · My favorite ___ is… · My hobbies are…</div>
+<div class="profile">
+<div><label>Name</label><input class="field" id="name" placeholder="My name is..."></div>
+<div><label>Country / city</label><input class="field" id="from" placeholder="I'm from..."></div>
+<div><label>Job / student</label><input class="field" id="job" placeholder="I am a..."></div>
+<div><label>Favorite food</label><input class="field" id="food" placeholder="My favorite food is..."></div>
+<div><label>Favorite music</label><input class="field" id="music" placeholder="My favorite music is..."></div>
+<div><label>Hobbies</label><input class="field" id="hobbies" placeholder="My hobbies are..."></div>
+</div>
+<div class="instruction"><b>Speaking challenge:</b> Close the profile after writing. Tell your partner <b>three facts</b> about yourself. Then ask: <b>Are you…?</b> or <b>Is your…?</b></div>
+<div class="controls"><button class="secondary" onclick="go('questions')">← Back</button><button class="primary" onclick="finish()">Complete ✓</button></div>
+</div></section>
+
+<section class="screen" id="finish"><div class="card center">
+<div class="badge" id="badge">🏁</div><div class="eyebrow">Challenge complete</div><h2 id="title">Nice work!</h2><p class="muted" id="final"></p>
+<div class="instruction" style="text-align:left"><b>Final 30-second challenge:</b><br>Say three sentences about yourself using <b>am / is / are</b>. Then ask one partner a <b>Yes/No question with be</b> and answer it.</div>
+<button class="primary" onclick="location.reload()">Play again</button>
+</div></section>
+</div>
+<script>
+const data={
+forms:[["I ___ an English student.","am"],["My teacher ___ very friendly.","is"],["We ___ in the same class.","are"],["My favorite movies ___ comedies.","are"],["My best friend ___ from Colombia.","is"]],
+fix:[
+["I is from Cali.",["I am from Cali.","I is from Cali.","I are from Cali."]],
+["They is my classmates.",["They are my classmates.","They is my classmates.","They am my classmates."]],
+["She are a teacher.",["She is a teacher.","She are a teacher.","She am a teacher."]],
+["We am ready.",["We are ready.","We is ready.","We am ready."]],
+["He are my brother.",["He is my brother.","He are my brother.","He am my brother."]]
+],
+q:[
+["___ you a student?","Are","Yes, I am."],
+["___ she from Mexico?","Is","No, she isn't."],
+["___ they your friends?","Are","Yes, they are."],
+["___ he your teacher?","Is","Yes, he is."],
+["___ you from Cali?","Are","No, I'm not."]
+]};
+let score=0,done={forms:0,fix:0,q:0};
+function points(n=10){score+=n;document.getElementById('score').textContent=score;document.getElementById('status').textContent=score>=90?"Strong!" : score>=50?"Good progress":"Keep going"}
+function go(id){
+ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');
+ const ids=['start','forms','fix','questions','profile','finish'],pct=ids.indexOf(id)/(ids.length-1)*100;document.getElementById('bar').style.width=pct+'%';
+ document.querySelectorAll('.nav button').forEach((b,i)=>b.classList.toggle('active',i===ids.indexOf(id)));
+}
+function buildForms(){
+ let b=document.getElementById('formsBox');data.forms.forEach((x,i)=>{let d=document.createElement('div');d.innerHTML=`<div class="question">${i+1}. ${x[0]}</div><div class="options">${['am','is','are'].map(o=>`<button class="option" onclick="choice(this,${o===x[1]},'f${i}','${x[1]}')">${o}</button>`).join('')}</div><div class="feedback" id="f${i}"></div>`;b.appendChild(d)})}
+function buildFix(){
+ let b=document.getElementById('fixBox');data.fix.forEach((x,i)=>{let d=document.createElement('div');d.innerHTML=`<div class="question">${i+1}. Choose the correct sentence.</div><div class="options">${x[1].map((o,j)=>`<button class="option" onclick="choice(this,${j===0},'x${i}','${x[1][0].replace(/'/g,"&#39;")}')">${o}</button>`).join('')}</div><div class="feedback" id="x${i}"></div>`;b.appendChild(d)})}
+function buildQ(){
+ let b=document.getElementById('qBox');data.q.forEach((x,i)=>{let opts=i%2?['Is','Are','Am']:['Are','Is','Am'];let d=document.createElement('div');d.innerHTML=`<div class="question">${i+1}. ${x[0]}</div><div class="options">${opts.map(o=>`<button class="option" onclick="qchoice(this,'${o}','${x[1]}','q${i}')">${o}</button>`).join('')}</div><div class="feedback" id="q${i}"></div>`;b.appendChild(d)})}
+function choice(btn,ok,id,ans){btn.parentElement.querySelectorAll('button').forEach(b=>b.disabled=true);let f=document.getElementById(id);if(ok){f.innerHTML='✓ Correct! Read the complete sentence aloud.';f.className='feedback good';points();}else{f.innerHTML='✗ Not quite. Correct answer: <b>'+ans+'</b>';f.className='feedback bad'} }
+function qchoice(btn,val,ans,id){btn.parentElement.querySelectorAll('button').forEach(b=>b.disabled=true);let f=document.getElementById(id);if(val===ans){f.innerHTML='✓ Correct! Now say the complete question and answer: <b>'+val+' '+data.q[Number(id.slice(1))][0].replace('___ ','')+'</b> — '+data.q[Number(id.slice(1))][2];f.className='feedback good';points()}else{f.innerHTML='✗ Try again: we need <b>'+ans+'</b>.';f.className='feedback bad'}}
+function finish(){let n=['name','from','job','food','music','hobbies'].filter(x=>document.getElementById(x).value.trim()).length;points(n*5);go('finish');document.getElementById('badge').textContent=score>=100?'🏆':score>=60?'⭐':'👍';document.getElementById('title').textContent=score>=100?'BE Master':score>=60?'Confident Refresher':'Good Start';document.getElementById('final').textContent='You finished with '+score+' points. Now use the language: speak, ask, answer, and describe people with be.'}
+buildForms();buildFix();buildQ();
+</script>
+</body></html>
